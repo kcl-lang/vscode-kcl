@@ -1,0 +1,71 @@
+{
+    "name": "kcl-vscode-extension",
+    "publisher": "kcl",
+    "displayName": "KCL",
+    "description": "Language extension for KCL",
+    "version": "0.0.6",
+    "engines": {
+        "vscode": "^1.50.0"
+    },
+    "categories": [
+        "Other",
+        "Programming Languages"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./out/extension.js",
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "lint": "eslint . --ext .ts,.tsx",
+        "watch": "tsc -watch -p ./"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "^12.12.0",
+        "@types/vscode": "^1.32.0",
+        "@typescript-eslint/eslint-plugin": "^4.16.0",
+        "@typescript-eslint/parser": "^4.16.0",
+        "eslint": "^7.21.0",
+        "typescript": "^4.2.2"
+    },
+    "contributes": {
+        "type": "object",
+        "title": "KCL configuration",
+        "properties": {
+            "languageServerExample.maxNumberOfProblems": {
+                "scope": "resource",
+                "type": "number",
+                "default": 100,
+                "description": "Controls the maximum number of problems produced by the server."
+            }
+        },
+        "languages": [
+            {
+                "id": "KCL",
+                "aliases": [
+                    "KCL"
+                ],
+                "extensions": [
+                    ".k"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "KCL",
+                "scopeName": "source.kcl",
+                "path": "./syntaxes/KCL.tmLanguage.json"
+            }
+        ]
+    },
+    "icon": "icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/KusionStack/vscode-kcl"
+    }
+}

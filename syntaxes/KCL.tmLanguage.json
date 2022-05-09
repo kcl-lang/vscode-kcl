@@ -1,0 +1,106 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "KCL",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#types"
+		},
+		{
+			"include": "#builtin-literals"
+		},
+		{
+			"include": "#single-quoted-strings"
+		},
+		{
+			"include": "#double-quoted-strings"
+		},
+		{
+			"include": "#comment"
+		},
+		{
+			"include": "#number"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.KCL",
+				"match": "\\b(as|assert|if|elif|else|final|for|import|schema|mixin|relaxed|check|and|in|is|not|or)\\b"
+			}]
+		},
+		"types": {
+			"patterns": [{
+				"name": "entity.name.type.KCL",
+				"match": "\\b(str|int|float|bool)\\b"
+			}]
+		},
+		"builtin-literals": {
+			"patterns": [{
+				"name": "constant.language.KCL",
+				"match": "\\b(True|False|None)\\b"
+			}]
+		},
+		"single-quoted-strings": {
+			"name": "string.quoted.single.KCL",
+			"begin": "'",
+			"end": "'",
+			"patterns": [
+				{
+					"name": "constant.character.escape.KCL",
+					"match": "\\\\."
+				}
+			]
+		},
+		"double-quoted-strings": {
+			"name": "string.quoted.double.KCL",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.KCL",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comment": {
+			"name": "comment.line.number-sign.KCL",
+			"patterns":[
+				{
+					"name": "comment.line.number-sign.KCL",
+					"match": "#.*"
+				}
+			]
+		},
+		"number": {
+			"name": "constant.numeric.KCL",
+			"patterns": [
+				{
+					"name": "constant.numeric.list.number.KCL",
+					"match": "\\-?[1-9]\\d*"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL",
+					"match": "\\-?0[xX][0-9a-fA-F]+"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL",
+					"match": "\\-?0[oO][0-7]+"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL",
+					"match": "\\-?0[bB][0-1]+"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL",
+					"match": "([-+]?\\d+\\.\\d*|\\.\\d+)([eE][-+]?\\d+)?|\\d+([eE][-+]?\\d+)"
+				}
+			]
+		}
+	},
+	"foldingStartMarker": "\\{\\s\\*\\$",
+	"foldingStopMarker": "\\^\\s\\*\\}",
+	"scopeName": "source.kcl"
+}

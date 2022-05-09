@@ -1,0 +1,26 @@
+{
+    "iconDefinitions": { 
+        "_file_light": {
+            "iconPath": "./images/document-light.svg"
+        },
+        "_file_dark": {
+            "iconPath": "./images/document-light.svg"
+        }
+    },
+    "languageIds": {
+        "KCL": "_file_light"
+    },
+    "fileExtensions": {
+		"k": "_file_light"
+	},
+    "light": {
+        "fileExtensions": {
+            "k": "_file_light"
+        }
+    },
+    "highContrast": {
+        "fileExtensions": {
+            "k": "_file_dark"
+        }
+    }
+  }
