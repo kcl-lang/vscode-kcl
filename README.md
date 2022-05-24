@@ -14,7 +14,7 @@ Welcome to KCL developing! We hope this extension enhances your development expe
 
 This extension provides coding assistance such as basic syntax highlight, IntelliSense such as auto complete and quick info hover, and code navigation. Other useful features such as diagnostics and testing are in developing.
 
-![features](docs/images/features.gif)
+<div style="text-align: center;"><img src="docs/images/features.gif" alt="VS Code KCL Extension features"  style="width: 75%"> </div>
 
 ## Ask for help
 
