@@ -28,7 +28,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.KCL",
-				"match": "\\b(as|assert|if|elif|else|final|for|import|schema|mixin|relaxed|check|and|in|is|not|or)\\b"
+				"match": "\\b(as|assert|if|elif|else|lambda|for|import|schema|protocol|rule|mixin|relaxed|check|and|in|is|not|or|all|any|map|filter|type)\\b"
 			}]
 		},
 		"types": {
