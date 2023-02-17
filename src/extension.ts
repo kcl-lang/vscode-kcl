@@ -7,12 +7,12 @@ import fs = require('fs');
 import path = require('path');
 import child_process = require("child_process");
 import {
+	Executable,
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
 } from 'vscode-languageclient/node';
 import { homedir } from 'os';
-
 
 let client: LanguageClient;
 
@@ -161,60 +161,35 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(provider1);
 
-	let kusionPath = process.env['KUSION_PATH'];
-	if (kusionPath == undefined) {
-		kusionPath = path.join(homedir(),".kusion");
-	} 
-	const lspPath = path.join(kusionPath, "kclvm/bin/kcl-go");
-	const lspLogPath = path.join(kusionPath, "logs/lsp.log");
-	let logLevel = process.env['KCL_LSP_LOG_LEVEL'];
-	if(logLevel == undefined) {
-		logLevel = "1";
-	}
-	const logLevelNumber: number = ~~logLevel;
-
-	if(!fs.existsSync(lspPath)){
-		return;
-	}
-
-	try {
-		const result = child_process.execSync(lspPath +" lsp --version");
-	} catch (error) {
-		console.log(`Current kcl version does not support language server. Please update to kcl v0.3.3+`);
-		console.log(error.message);
-		return;
-	}
-
-	const executable = {
-		command: lspPath,
-		args: ["lsp", "--log-file", lspLogPath, "--log-level", ""+logLevelNumber],
+	const traceOutputChannel = vscode.window.createOutputChannel("KCL Language Server trace");
+	const command = "kcl-language-server";
+	const run: Executable = {
+		command,
+		options: {
+			env: {
+				...process.env,
+				RUST_LOG: "debug",
+		},
+	},
 	};
-	
 	const serverOptions: ServerOptions = {
-		run: executable,
-		debug: executable,
+	run,
+	debug: run,
 	};
+	// If the extension is launched in debug mode then the debug server options are used
+	// Otherwise the run options are used
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
-		// Register the server for KCL documents
-		documentSelector: [{ scheme: 'file', language: 'KCL' }],
-		synchronize: {
-			// Notify the server about file changes to '.clientrc files contained in the workspace
-			fileEvents: vscode.workspace.createFileSystemWatcher('**/.clientrc')
-		}
+	// Register the server for plain text documents
+	documentSelector: [{ scheme: "file", language: "KCL" }],
+synchronize: {
+		fileEvents: vscode.workspace.createFileSystemWatcher("**/.k"),
+	},
+		traceOutputChannel,
 	};
-
-	// Create the language client and start the client.
-	client = new LanguageClient(
-		'kclLanguageServerClient',
-		'KCL Language Server Client',
-		serverOptions,
-		clientOptions
-	);
-
-	// Start the client. This will also launch the server
-	context.subscriptions.push(client.start());
-	
+  
+	client = new LanguageClient("kcl-language-server", "kcl language server", serverOptions, clientOptions);
+	client.start();
 }
 
 export function deactivate(): Thenable<void> | undefined {
