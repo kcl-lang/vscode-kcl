@@ -12,7 +12,7 @@
         "Programming Languages"
     ],
     "activationEvents": [
-        "*"
+        "onLanguage:KCL"
     ],
     "main": "./out/extension.js",
     "scripts": {
@@ -26,7 +26,7 @@
     },
     "devDependencies": {
         "@types/node": "^17.0.36",
-        "@types/vscode": "^1.67.0",
+        "@types/vscode": "^1.50.0",
         "@typescript-eslint/eslint-plugin": "^5.27.0",
         "@typescript-eslint/parser": "^5.27.0",
         "eslint": "^8.16.0",
