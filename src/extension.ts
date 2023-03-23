@@ -169,25 +169,25 @@ export function activate(context: vscode.ExtensionContext) {
 			env: {
 				...process.env,
 				RUST_LOG: "debug",
+			},
 		},
-	},
 	};
 	const serverOptions: ServerOptions = {
-	run,
-	debug: run,
+		run,
+		debug: run,
 	};
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
-	// Register the server for plain text documents
-	documentSelector: [{ scheme: "file", language: "KCL" }],
-synchronize: {
-		fileEvents: vscode.workspace.createFileSystemWatcher("**/.k"),
-	},
+		// Register the server for plain text documents
+		documentSelector: [{ scheme: "file", language: "KCL" }],
+		synchronize: {
+			fileEvents: vscode.workspace.createFileSystemWatcher("**/.k"),
+		},
 		traceOutputChannel,
 	};
-  
+
 	client = new LanguageClient("kcl-language-server", "kcl language server", serverOptions, clientOptions);
 	client.start();
 }
