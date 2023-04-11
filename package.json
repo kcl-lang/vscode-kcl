@@ -3,9 +3,9 @@
     "publisher": "kcl",
     "displayName": "KCL",
     "description": "Language extension for KCL",
-    "version": "0.0.8",
+    "version": "0.0.10",
     "engines": {
-        "vscode": "^1.50.0"
+        "vscode": "^1.63.0"
     },
     "categories": [
         "Other",
@@ -26,7 +26,7 @@
     },
     "devDependencies": {
         "@types/node": "^17.0.36",
-        "@types/vscode": "^1.50.0",
+        "@types/vscode": "^1.63.0",
         "@typescript-eslint/eslint-plugin": "^5.27.0",
         "@typescript-eslint/parser": "^5.27.0",
         "eslint": "^8.16.0",
