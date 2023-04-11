@@ -38,9 +38,13 @@ This extension provides some coding assistance, including the following features
 
 Other useful features such as refactoring and testing are in development.
 
+## Dependencies
+
+We recommend that you use the latest version of KCLVM, but the minimum required version for this extension is 0.4.6. If you are using an earlier version, the extension may not work properly.
+
 ## Known Issues
-+ Hover and GotoDefintion: The current hover and goto definition are similar to global search, and there may be multiple results for some Identifiers with the same name
-+ Completion: Semantic completion is not yet supported
++ Hover and GotoDefintion: The current hover and goto definitions are similar to global search, and there may be multiple results for some Identifiers with the same name.
++ Completion: Semantic completion is not yet supported.
 
 ## Ask for help
 

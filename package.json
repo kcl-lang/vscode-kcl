@@ -22,7 +22,9 @@
         "watch": "tsc -watch -p ./"
     },
     "dependencies": {
-        "vscode-languageclient": "^8.0.1"
+        "vscode-languageclient": "^8.0.1",
+        "@types/shelljs": "^0.8.11",
+        "shelljs": "^0.8.5"
     },
     "devDependencies": {
         "@types/node": "^17.0.36",
