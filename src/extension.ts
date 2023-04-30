@@ -193,6 +193,18 @@ export function activate(context: vscode.ExtensionContext) {
 			synchronize: {
 				fileEvents: vscode.workspace.createFileSystemWatcher("**/.k"),
 			},
+			uriConverters: {
+				// by default the URI sent over the protocol will be percent encoded (see rfc3986#section-2.1)
+				// the "workaround" below disables temporarily the encoding until decoding is implemented properly in clangd
+				// see alse: https://github.com/microsoft/vscode/issues/144698
+				// see alse: https://github.com/mono/linux-packaging-mono/blob/1d6753294b2993e1fbf92de9366bb9544db4189b/external/llvm-project/clang-tools-extra/clangd/clients/clangd-vscode/src/extension.ts#L30
+				code2Protocol: (uri: vscode.Uri) : string => {
+					let s = uri.toString(true);
+					console.log("url2str: ", s);
+					return s;
+				},
+				protocol2Code: (uri: string) : vscode.Uri => vscode.Uri.parse(uri)
+			},
 			traceOutputChannel,
 		};
 
