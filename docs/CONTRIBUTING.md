@@ -15,7 +15,7 @@ This guide will explain the process to set up your development environment to wo
 2. Clone the repository and run npm install:
 
 ```
-git clone https://github.com/KusionStack/vscode-kcl.git
+git clone https://github.com/kcl-lang/vscode-kcl.git
 cd vscode-kcl
 npm install
 code .
