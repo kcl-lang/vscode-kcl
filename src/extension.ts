@@ -7,6 +7,8 @@ import fs = require('fs');
 import path = require('path');
 import child_process = require("child_process");
 import * as shelljs from 'shelljs';
+import {outputChannel} from './kclStatus';
+import * as install from './install';
 
 import {
 	Executable,
@@ -19,10 +21,12 @@ import { homedir } from 'os';
 let client: LanguageClient;
 
 function kcl_rust_lsp_installed(): boolean {
+	// note: start from kcl 0.4.6 the kcl-language-server binary is renamed to kcl-language-server
+	// the old kcl-lsp binary will be deprecated
 	return shelljs.which("kcl-language-server") ? true : false;
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	const provider1 = vscode.languages.registerCompletionItemProvider('KCL', {
 		provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 			// a completion item that inserts its text as snippet,
@@ -166,13 +170,19 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(provider1);
+	let language_server_path: string | undefined;
+	if (!kcl_rust_lsp_installed()) {
+		language_server_path = await install.promptInstallLanguageServer();
+	} else {
+		language_server_path = install.KCL_LANGUAGE_SERVER;
+	}
 
-	if (kcl_rust_lsp_installed()) {
-		// rust ver
+	if (language_server_path) {
+		// start language server
 		const traceOutputChannel = vscode.window.createOutputChannel("KCL Language Server trace");
 		const command = "kcl-language-server";
 		const run: Executable = {
-			command,
+			command: language_server_path,
 			options: {
 				env: {
 					...process.env,
@@ -196,67 +206,7 @@ export function activate(context: vscode.ExtensionContext) {
 			traceOutputChannel,
 		};
 
-		client = new LanguageClient("kcl-language-server", "kcl language server", serverOptions, clientOptions);
-		client.start();
-	} else {
-		const install = 'Install';
-		vscode.window.showInformationMessage(`Not found kcl-language-server`, ...[install]).then((option) => {
-			if (option === install) {
-				// this will open the Url in your default browser
-				vscode.env.openExternal(vscode.Uri.parse(`https://kcl-lang.io/docs/tools/Ide/vs-code`));
-			}
-		});
-		// python ver
-		let kusionPath = process.env['KUSION_PATH'];
-		if (kusionPath == undefined) {
-			kusionPath = path.join(homedir(), ".kusion");
-		}
-		const lspPath = path.join(kusionPath, "kclvm/bin/kcl-go");
-		const lspLogPath = path.join(kusionPath, "logs/lsp.log");
-		let logLevel = process.env['KCL_LSP_LOG_LEVEL'];
-		if (logLevel == undefined) {
-			logLevel = "1";
-		}
-		const logLevelNumber: number = ~~logLevel;
-
-		if (!fs.existsSync(lspPath)) {
-			return;
-		}
-		try {
-			const result = child_process.execSync(lspPath + " lsp --version");
-		} catch (error) {
-			console.log(`Current kcl version does not support language server. Please update to kcl v0.3.3+`);
-			return;
-		}
-
-		const executable = {
-			command: lspPath,
-			args: ["lsp", "--log-file", lspLogPath, "--log-level", "" + logLevelNumber],
-		};
-
-		const serverOptions: ServerOptions = {
-			run: executable,
-			debug: executable,
-		};
-		// Options to control the language client
-		const clientOptions: LanguageClientOptions = {
-			// Register the server for KCL documents
-			documentSelector: [{ scheme: 'file', language: 'KCL' }],
-			synchronize: {
-				// Notify the server about file changes to '.clientrc files contained in the workspace
-				fileEvents: vscode.workspace.createFileSystemWatcher('**/.k')
-			}
-		};
-
-		// Create the language client and start the client.
-		client = new LanguageClient(
-			'kclLanguageServerClient',
-			'KCL Language Server Client',
-			serverOptions,
-			clientOptions
-		);
-
-		// Start the client. This will also launch the server
+		client = new LanguageClient(install.KCL_LANGUAGE_SERVER, "kcl language server", serverOptions, clientOptions);
 		client.start();
 	}
 }
