@@ -69,24 +69,30 @@ export async function installLanguageServer(): Promise<string | undefined> {
 export async function downloadToLocal(releaseURL: string, installPath: string): Promise<boolean> {
 	outputChannel.appendLine(`3. Fetching latest version from ${releaseURL}`);
 	// todo: support retry when got http code 403
-	const resp = await axios.get<Readable>(releaseURL, {responseType: 'stream'});
-	if (resp.status !== axios.HttpStatusCode.Ok) {
-		outputChannel.appendLine(`3. Failed to fetch latest version: ${resp.statusText}. Please download manually from ${releaseURL}`);
+	try {
+		const resp = await axios.get<Readable>(releaseURL, {responseType: 'stream'});
+		if (resp.status !== axios.HttpStatusCode.Ok) {
+			outputChannel.appendLine(`3. Failed to fetch latest version: ${resp.statusText}. Please download manually from ${releaseURL}`);
+			return false;
+		}
+		const writer = fs.createWriteStream(installPath);
+		resp.data.pipe(writer);
+		// todo: show progress bar of download process
+		return new Promise<boolean>((resolve, reject) => {
+			writer.on('finish', ()=>{
+				outputChannel.appendLine(`4. Successfully installed to ${installPath}`);
+				resolve(true);
+			});
+			writer.on('error', (error)=>{
+				outputChannel.appendLine(`4. Failed to download binary: ${error.message}`);
+				reject(false);
+			});
+		});
+	} catch (error) {
+		outputChannel.appendLine(`3. Failed to fetch latest version: ${error}`);
 		return false;
 	}
-	const writer = fs.createWriteStream(installPath);
-	resp.data.pipe(writer);
-	// todo: show progress bar of download process
-	return new Promise<boolean>((resolve, reject) => {
-		writer.on('finish', ()=>{
-			outputChannel.appendLine(`4. Successfully installed to ${installPath}`);
-			resolve(true);
-		});
-		writer.on('error', (error)=>{
-			outputChannel.appendLine(`4. Failed to download binary: ${error.message}`);
-			reject(false);
-		});
-	});
+	
 }
 
 function getInstallPath(toolName: string): string {
@@ -160,27 +166,32 @@ function reportNotSupportError(platform: string, arch: string){
 }
 
 
-async function getLatestRelease(): Promise<string> {
+async function getLatestRelease(): Promise<string|undefined> {
 	const releaseAPI=`https://api.github.com/repos/${GIT_ORG}/${KCL_REPO}/releases`;
-	// todo: support retry when got http code 403
-    const resp = await axios.get<ReleaseInfo[]>(releaseAPI);
-    if (resp.status !== axios.HttpStatusCode.Ok) {
-        outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${resp.statusText}`);
-    }
-    const releases = resp.data;
-	// todo: fix latest release logic
-	const latestRelease = releases.reduce((prev, curr) => {
-		const version = curr.tag_name;
-		if (curr.prerelease && !prev.prerelease) {
-			return prev;
+	try {
+		// todo: support retry when got http code 403
+		const resp = await axios.get<ReleaseInfo[]>(releaseAPI);
+		if (resp.status !== axios.HttpStatusCode.Ok) {
+			outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${resp.statusText}`);
 		}
-		if (prev.prerelease && !curr.prerelease) {
-			return curr;
-		}
-		const result = version.localeCompare(prev.tag_name, 'en-US', {numeric: true, sensitivity: 'base'});
-		return result > 0 ? curr : prev;
-	});
-	return latestRelease.tag_name;
+		const releases = resp.data;
+		// todo: fix latest release logic
+		const latestRelease = releases.reduce((prev, curr) => {
+			const version = curr.tag_name;
+			if (curr.prerelease && !prev.prerelease) {
+				return prev;
+			}
+			if (prev.prerelease && !curr.prerelease) {
+				return curr;
+			}
+			const result = version.localeCompare(prev.tag_name, 'en-US', {numeric: true, sensitivity: 'base'});
+			return result > 0 ? curr : prev;
+		});
+		return latestRelease.tag_name;
+	} catch (error) {
+		outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${error}`);
+		return;
+	}
 }
 
 type ReleaseInfo = {
