@@ -167,27 +167,14 @@ function reportNotSupportError(platform: string, arch: string){
 
 
 async function getLatestRelease(): Promise<string|undefined> {
-	const releaseAPI=`https://api.github.com/repos/${GIT_ORG}/${KCL_REPO}/releases`;
+	const releaseAPI=`https://api.github.com/repos/${GIT_ORG}/${KCL_REPO}/releases/latest`;
 	try {
-		// todo: support retry when got http code 403
-		const resp = await axios.get<ReleaseInfo[]>(releaseAPI);
+		// todo: support retry when got http code 403(usually caused by api rate limit)
+		const resp = await axios.get<ReleaseInfo>(releaseAPI);
 		if (resp.status !== axios.HttpStatusCode.Ok) {
 			outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${resp.statusText}`);
 		}
-		const releases = resp.data;
-		// todo: fix latest release logic
-		const latestRelease = releases.reduce((prev, curr) => {
-			const version = curr.tag_name;
-			if (curr.prerelease && !prev.prerelease) {
-				return prev;
-			}
-			if (prev.prerelease && !curr.prerelease) {
-				return curr;
-			}
-			const result = version.localeCompare(prev.tag_name, 'en-US', {numeric: true, sensitivity: 'base'});
-			return result > 0 ? curr : prev;
-		});
-		return latestRelease.tag_name;
+		return resp.data.tag_name;
 	} catch (error) {
 		outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${error}`);
 		return;
