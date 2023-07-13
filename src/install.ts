@@ -15,9 +15,9 @@ const RELEASE_BASE_URL = `https://github.com/${GIT_ORG}/${KCL_REPO}/releases/dow
 export const KCL_LANGUAGE_SERVER = 'kcl-language-server';
 
 export async function promptInstallLanguageServer(): Promise<string | undefined> {
-	const installOptions = ['Install'];
+	const installOptions = ['Install', 'Cancel'];
 	const selected = await vscode.window.showErrorMessage(
-		`The kcl-language-server is needed for KCL code intelliSense`,
+		`The kcl-language-server is required for KCL code intelliSense. Install now?`,
 		...installOptions
 	);
 	switch(selected) {
@@ -33,54 +33,61 @@ export async function installLanguageServer(): Promise<string | undefined> {
 	outputChannel.show();
 	outputChannel.clear();
 
-	const installingMsg = `Installing ${KCL_LANGUAGE_SERVER} to ${KPM_BIN_PARTH}...`;
+	const installingMsg = `Installing ${KCL_LANGUAGE_SERVER} to ${KPM_BIN_PARTH}`;
 	outputChannel.appendLine(installingMsg);
 
 	// get download url and install path
-	const downloadFromUrl = await getReleaseURL(KCL_LANGUAGE_SERVER);
-	if (!downloadFromUrl) {
+	const downloadUrl = await getReleaseURL(KCL_LANGUAGE_SERVER);
+	if (!downloadUrl) {
 		return;
 	}
 	const installPath = getInstallPath(KCL_LANGUAGE_SERVER);
 	
 	// remove old version if exists
+	outputChannel.appendLine(`2. Removing old version from ${installPath}`);
 	fs.rmSync(installPath, {force: true});
 
 	// create .kcl/kpm/bin directory if not exists
 	fs.mkdirSync(KPM_BIN_PARTH, {recursive: true});
 
 	// download binary to install path
-	if (!await downloadToLocal(downloadFromUrl, installPath)) {
+	if (!await downloadToLocal(downloadUrl, installPath)) {
 		return;
 	}
 	
 	// garantee executable permission
 	fs.chmodSync(installPath, '755');
+
+	// separate line
+	outputChannel.appendLine('');
 	return installPath;
 	
-	// todo: restart language server each time after installation
+	// todo: gurantee to restart language server each time after installation
 	// todo: add KPM_BIN_PARTH to $PATH
 }
 
 export async function downloadToLocal(releaseURL: string, installPath: string): Promise<boolean> {
+	outputChannel.appendLine(`3. Fetching latest version from ${releaseURL}`);
+	// todo: support retry when got http code 403
 	const resp = await axios.get<Readable>(releaseURL, {responseType: 'stream'});
+	if (resp.status !== axios.HttpStatusCode.Ok) {
+		outputChannel.appendLine(`3. Failed to fetch latest version: ${resp.statusText}. Please download manually from ${releaseURL}`);
+		return false;
+	}
 	const writer = fs.createWriteStream(installPath);
 	resp.data.pipe(writer);
+	// todo: show progress bar of download process
 	return new Promise<boolean>((resolve, reject) => {
 		writer.on('finish', ()=>{
-			outputChannel.appendLine(`Successfully downloaded to ${installPath}`);
+			outputChannel.appendLine(`4. Successfully installed to ${installPath}`);
 			resolve(true);
 		});
 		writer.on('error', (error)=>{
-			outputChannel.appendLine(`Download failed: ${error.message}`);
+			outputChannel.appendLine(`4. Failed to download binary: ${error.message}`);
 			reject(false);
 		});
 	});
 }
-
-type DownloadAssetResp = {
-	data: any;
-};
 
 function getInstallPath(toolName: string): string {
 	return path.join(KPM_BIN_PARTH, toolName);
@@ -88,6 +95,10 @@ function getInstallPath(toolName: string): string {
 
 async function getReleaseURL(toolName: string): Promise<string | undefined> {
 	const version = await getLatestRelease();
+	if (!version) {
+		return;
+	}
+	outputChannel.appendLine(`1. The latest release version is: ${version}`);
 	const binaryName = getBinaryName(toolName, version);
 	if (!binaryName) {
 		return;
@@ -151,12 +162,13 @@ function reportNotSupportError(platform: string, arch: string){
 
 async function getLatestRelease(): Promise<string> {
 	const releaseAPI=`https://api.github.com/repos/${GIT_ORG}/${KCL_REPO}/releases`;
+	// todo: support retry when got http code 403
     const resp = await axios.get<ReleaseInfo[]>(releaseAPI);
     if (resp.status !== axios.HttpStatusCode.Ok) {
-		// todo: error msg
-        outputChannel.appendLine(`http code: ${resp.status}`);
+        outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${resp.statusText}`);
     }
     const releases = resp.data;
+	// todo: fix latest release logic
 	const latestRelease = releases.reduce((prev, curr) => {
 		const version = curr.tag_name;
 		if (curr.prerelease && !prev.prerelease) {

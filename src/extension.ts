@@ -16,7 +16,6 @@ import {
 	LanguageClientOptions,
 	ServerOptions,
 } from 'vscode-languageclient/node';
-import { homedir } from 'os';
 
 let client: LanguageClient;
 
@@ -178,6 +177,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	if (language_server_path) {
+		outputChannel.appendLine(`Starting language server with ${language_server_path}`);
 		// start language server
 		const traceOutputChannel = vscode.window.createOutputChannel("KCL Language Server trace");
 		const command = "kcl-language-server";
@@ -208,6 +208,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		client = new LanguageClient(install.KCL_LANGUAGE_SERVER, "kcl language server", serverOptions, clientOptions);
 		client.start();
+		outputChannel.appendLine(`${install.KCL_LANGUAGE_SERVER} started!`);
 	}
 }
 
