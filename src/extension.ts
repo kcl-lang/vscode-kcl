@@ -3,7 +3,6 @@
  *--------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import {outputChannel} from './kclStatus';
 import * as install from './install';
 
 import {
@@ -167,10 +166,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	}
 
 	if (language_server_path) {
-		outputChannel.appendLine(`Starting language server with ${language_server_path}`);
+		install.outputMsg(`Starting language server with ${language_server_path}`);
 		// start language server
 		const traceOutputChannel = vscode.window.createOutputChannel("KCL Language Server trace");
-		const command = "kcl-language-server";
 		const run: Executable = {
 			command: language_server_path,
 			options: {
@@ -198,7 +196,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		client = new LanguageClient(install.KCL_LANGUAGE_SERVER, "kcl language server", serverOptions, clientOptions);
 		client.start();
-		outputChannel.appendLine(`${install.KCL_LANGUAGE_SERVER} started!`);
+		install.outputMsg(`${install.KCL_LANGUAGE_SERVER} started!`);
 	}
 }
 
