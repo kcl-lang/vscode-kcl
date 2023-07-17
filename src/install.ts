@@ -5,14 +5,21 @@ import * as path from 'path';
 import axios from 'axios';
 import * as fs from 'fs';
 import { Readable } from 'node:stream';
+import * as shelljs from 'shelljs';
 
 const KCL_PATH = path.join(os.homedir(), '.kcl');
 const KPM_PATH = path.join(KCL_PATH, 'kpm');
 const KPM_BIN_PARTH = path.join(KPM_PATH, 'bin');
 const GIT_ORG = 'kcl-lang';
 const KCL_REPO = 'kcl';
-const RELEASE_BASE_URL = `https://github.com/${GIT_ORG}/${KCL_REPO}/releases/download`;
+export const RELEASE_BASE_URL = `https://github.com/${GIT_ORG}/${KCL_REPO}/releases/download`;
 export const KCL_LANGUAGE_SERVER = 'kcl-language-server';
+
+export function kcl_rust_lsp_installed(): boolean {
+	// note: start from kcl 0.4.6 the kcl-language-server binary is renamed to kcl-language-server
+	// the old kcl-lsp binary will be deprecated
+	return shelljs.which("kcl-language-server") ? true : false;
+}
 
 export async function promptInstallLanguageServer(): Promise<string | undefined> {
 	const installOptions = ['Install', 'Cancel'];
@@ -95,7 +102,7 @@ export async function downloadToLocal(releaseURL: string, installPath: string): 
 	
 }
 
-function getInstallPath(toolName: string): string {
+export function getInstallPath(toolName: string): string {
 	return path.join(KPM_BIN_PARTH, toolName);
 }
 
@@ -112,7 +119,7 @@ async function getReleaseURL(toolName: string): Promise<string | undefined> {
 	return `${RELEASE_BASE_URL}/${version}/${binaryName}`;
 }
 
-function getBinaryName(toolName: string, version: string): string|undefined {
+export function getBinaryName(toolName: string, version: string): string|undefined {
 	const platform = os.type() === 'Windows_NT' ? 'windows' : os.type().toLowerCase();
 	const archType = os.arch();
 	let arch: string;
@@ -157,7 +164,7 @@ function getBinaryName(toolName: string, version: string): string|undefined {
 	
 	const extension = platform === 'windows' ? '.exe' : '';
 	const archPart = arch ? `-${arch}` : '';
-	return `${toolName}-${version}-${os.type()}${archPart}${extension}`;
+	return `${toolName}-${version}-${platform}${archPart}${extension}`;
 }
 
 function reportNotSupportError(platform: string, arch: string){

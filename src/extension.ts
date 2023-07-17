@@ -3,10 +3,6 @@
  *--------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import fs = require('fs');
-import path = require('path');
-import child_process = require("child_process");
-import * as shelljs from 'shelljs';
 import {outputChannel} from './kclStatus';
 import * as install from './install';
 
@@ -18,12 +14,6 @@ import {
 } from 'vscode-languageclient/node';
 
 let client: LanguageClient;
-
-function kcl_rust_lsp_installed(): boolean {
-	// note: start from kcl 0.4.6 the kcl-language-server binary is renamed to kcl-language-server
-	// the old kcl-lsp binary will be deprecated
-	return shelljs.which("kcl-language-server") ? true : false;
-}
 
 export async function activate(context: vscode.ExtensionContext) {
 	const provider1 = vscode.languages.registerCompletionItemProvider('KCL', {
@@ -170,7 +160,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(provider1);
 	let language_server_path: string | undefined;
-	if (!kcl_rust_lsp_installed()) {
+	if (!install.kcl_rust_lsp_installed()) {
 		language_server_path = await install.promptInstallLanguageServer();
 	} else {
 		language_server_path = install.KCL_LANGUAGE_SERVER;

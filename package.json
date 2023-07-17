@@ -19,7 +19,8 @@
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
-        "watch": "tsc -watch -p ./"
+        "watch": "tsc -watch -p ./",
+        "test": "node ./out/test/runTest.js"
     },
     "dependencies": {
         "@types/shelljs": "^0.8.11",
@@ -28,11 +29,14 @@
         "vscode-languageclient": "^8.0.1"
     },
     "devDependencies": {
+        "@types/mocha": "^10.0.1",
         "@types/node": "^17.0.36",
         "@types/vscode": "^1.63.0",
         "@typescript-eslint/eslint-plugin": "^5.27.0",
         "@typescript-eslint/parser": "^5.27.0",
+        "@vscode/test-electron": "^2.3.3",
         "eslint": "^8.16.0",
+        "mocha": "^10.2.0",
         "typescript": "^4.7.2"
     },
     "contributes": {
