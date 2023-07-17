@@ -9,7 +9,7 @@ import * as shelljs from 'shelljs';
 
 const KCL_PATH = path.join(os.homedir(), '.kcl');
 const KPM_PATH = path.join(KCL_PATH, 'kpm');
-const KPM_BIN_PARTH = path.join(KPM_PATH, 'bin');
+const KPM_BIN_PATH = path.join(KPM_PATH, 'bin');
 const GIT_ORG = 'kcl-lang';
 const KCL_REPO = 'kcl';
 export const RELEASE_BASE_URL = `https://github.com/${GIT_ORG}/${KCL_REPO}/releases/download`;
@@ -40,7 +40,7 @@ export async function installLanguageServer(): Promise<string | undefined> {
 	outputChannel.show();
 	outputChannel.clear();
 
-	const installingMsg = `Installing ${KCL_LANGUAGE_SERVER} to ${KPM_BIN_PARTH}`;
+	const installingMsg = `Installing ${KCL_LANGUAGE_SERVER} to ${KPM_BIN_PATH}`;
 	outputChannel.appendLine(installingMsg);
 
 	// get download url and install path
@@ -55,7 +55,7 @@ export async function installLanguageServer(): Promise<string | undefined> {
 	fs.rmSync(installPath, {force: true});
 
 	// create .kcl/kpm/bin directory if not exists
-	fs.mkdirSync(KPM_BIN_PARTH, {recursive: true});
+	fs.mkdirSync(KPM_BIN_PATH, {recursive: true});
 
 	// download binary to install path
 	if (!await downloadToLocal(downloadUrl, installPath)) {
@@ -103,7 +103,7 @@ export async function downloadToLocal(releaseURL: string, installPath: string): 
 }
 
 export function getInstallPath(toolName: string): string {
-	return path.join(KPM_BIN_PARTH, toolName);
+	return path.join(KPM_BIN_PATH, toolName);
 }
 
 async function getReleaseURL(toolName: string): Promise<string | undefined> {
