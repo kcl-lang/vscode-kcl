@@ -14,3 +14,6 @@ pre-publish:
 	make compile
 	vsce package --pre-release --baseImagesUrl https://github.com/kcl-lang/vscode-kcl.git
 	vsce publish --pre-release --baseImagesUrl https://github.com/kcl-lang/vscode-kcl.git
+
+test:
+	npm run test
