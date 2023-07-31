@@ -2,9 +2,8 @@ import * as vscode from 'vscode';
 import {outputChannel} from './kclStatus';
 import * as os from 'os';
 import * as path from 'path';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import * as fs from 'fs';
-import { Readable } from 'node:stream';
 import * as shelljs from 'shelljs';
 
 const KCL_PATH = path.join(os.homedir(), '.kcl');
@@ -14,6 +13,17 @@ const GIT_ORG = 'kcl-lang';
 const KCL_REPO = 'kcl';
 export const RELEASE_BASE_URL = `https://github.com/${GIT_ORG}/${KCL_REPO}/releases/download`;
 export const KCL_LANGUAGE_SERVER = 'kcl-language-server';
+
+let installMsgs = '';
+
+export function outputMsg(msg: string, append = true) {
+	if (append){
+		installMsgs += msg + '\n';
+		outputChannel.replace(installMsgs);
+	} else {
+		outputChannel.replace(installMsgs + msg);
+	}
+}
 
 export function kcl_rust_lsp_installed(): boolean {
 	// note: start from kcl 0.4.6 the kcl-language-server binary is renamed to kcl-language-server
@@ -51,7 +61,7 @@ export async function installLanguageServer(): Promise<string | undefined> {
 	const installPath = getInstallPath(KCL_LANGUAGE_SERVER);
 	
 	// remove old version if exists
-	outputChannel.appendLine(`2. Removing old version from ${installPath}`);
+	outputMsg(`2. Removing old version from ${installPath}`);
 	fs.rmSync(installPath, {force: true});
 
 	// create .kcl/kpm/bin directory if not exists
@@ -66,7 +76,8 @@ export async function installLanguageServer(): Promise<string | undefined> {
 	fs.chmodSync(installPath, '755');
 
 	// separate line
-	outputChannel.appendLine('');
+	outputMsg('');
+
 	return installPath;
 	
 	// todo: gurantee to restart language server each time after installation
@@ -74,32 +85,60 @@ export async function installLanguageServer(): Promise<string | undefined> {
 }
 
 export async function downloadToLocal(releaseURL: string, installPath: string): Promise<boolean> {
-	outputChannel.appendLine(`3. Fetching latest version from ${releaseURL}`);
-	// todo: support retry when got http code 403
-	try {
-		const resp = await axios.get<Readable>(releaseURL, {responseType: 'stream'});
-		if (resp.status !== axios.HttpStatusCode.Ok) {
-			outputChannel.appendLine(`3. Failed to fetch latest version: ${resp.statusText}. Please download manually from ${releaseURL}`);
-			return false;
+	outputMsg(`3. Fetching latest version from ${releaseURL}`);
+	let downloadEnd = false;
+	return new Promise<boolean>((resolve, reject) => {
+		try {
+			axios({
+				url: releaseURL,
+				responseType: 'stream',
+			}).then((response: AxiosResponse<any>) => {
+				// verify the reponse status
+				if (response.status !== axios.HttpStatusCode.Ok) {
+					downloadEnd = true;
+					outputMsg(`3. Failed to fetch latest version: ${response.statusText}. Please download manually from ${releaseURL} and place it to ${installPath}`);
+					resolve(false);
+				}
+				const file = fs.createWriteStream(installPath);
+				let downloadedSize = 0;
+		
+				// listen to the data event, write each chunk to file
+				response.data.on('data', (chunk: any) => {
+					file.write(chunk);
+					downloadedSize += chunk.length;
+		
+					// compute and show progress
+					const totalSize = response.headers['content-length'];
+					const percent = ((downloadedSize / totalSize) * 100).toFixed(2);
+					if (!downloadEnd) {
+						outputMsg(`${downloadedSize} bytes received(${percent}%)`, false);
+					}
+				});
+		
+				// listen to the end event
+				response.data.on('end', () => {
+					downloadEnd = true;
+					outputMsg(`4. Successfully installed to ${installPath}`);
+					
+					file.end();
+					resolve(true);
+				});
+		
+				// listen to the error event
+				response.data.on('error', (err: Error) => {
+					downloadEnd = true;
+					outputMsg(`4. Failed to download binary: ${err.message}`);
+					// delete local tmp file
+					fs.unlinkSync(installPath);
+					resolve(false);
+				});
+			});
+		} catch (error) {
+			downloadEnd = true;
+			outputMsg(`3. Failed to fetch latest version: ${error}`);
+			resolve(false);
 		}
-		const writer = fs.createWriteStream(installPath);
-		resp.data.pipe(writer);
-		// todo: show progress bar of download process
-		return new Promise<boolean>((resolve, reject) => {
-			writer.on('finish', ()=>{
-				outputChannel.appendLine(`4. Successfully installed to ${installPath}`);
-				resolve(true);
-			});
-			writer.on('error', (error)=>{
-				outputChannel.appendLine(`4. Failed to download binary: ${error.message}`);
-				reject(false);
-			});
-		});
-	} catch (error) {
-		outputChannel.appendLine(`3. Failed to fetch latest version: ${error}`);
-		return false;
-	}
-	
+	});
 }
 
 export function getInstallPath(toolName: string): string {
@@ -111,7 +150,7 @@ async function getReleaseURL(toolName: string): Promise<string | undefined> {
 	if (!version) {
 		return;
 	}
-	outputChannel.appendLine(`1. The latest release version is: ${version}`);
+	outputMsg(`1. The latest release version is: ${version}`);
 	const binaryName = getBinaryName(toolName, version);
 	if (!binaryName) {
 		return;
@@ -169,7 +208,7 @@ export function getBinaryName(toolName: string, version: string): string|undefin
 
 function reportNotSupportError(platform: string, arch: string){
 	// todo: add feedback button and link; add build from source link
-	outputChannel.appendLine(`No prebuilt binary available for '${platform}'-'${arch}', feedback to us please.`);
+	outputMsg(`No prebuilt binary available for '${platform}'-'${arch}', feedback to us please.`);
 }
 
 
@@ -179,11 +218,11 @@ async function getLatestRelease(): Promise<string|undefined> {
 		// todo: support retry when got http code 403(usually caused by api rate limit)
 		const resp = await axios.get<ReleaseInfo>(releaseAPI);
 		if (resp.status !== axios.HttpStatusCode.Ok) {
-			outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${resp.statusText}`);
+			outputMsg(`Failed to fetch releases from ${releaseAPI}: ${resp.statusText}`);
 		}
 		return resp.data.tag_name;
 	} catch (error) {
-		outputChannel.appendLine(`Failed to fetch releases from ${releaseAPI}: ${error}`);
+		outputMsg(`Failed to fetch releases from ${releaseAPI}: ${error}`);
 		return;
 	}
 }
