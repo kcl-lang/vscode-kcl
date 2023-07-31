@@ -68,6 +68,13 @@
                 "scopeName": "source.kcl",
                 "path": "./syntaxes/KCL.tmLanguage.json"
             }
+        ],
+        "commands": [
+            {
+                "command": "kcl.installLanguageServer",
+                "title": "Install KCL Language Server",
+                "category": "KCL"
+            }
         ]
     },
     "icon": "icon.png",
