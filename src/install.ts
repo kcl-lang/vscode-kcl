@@ -79,8 +79,6 @@ export async function installLanguageServer(): Promise<string | undefined> {
 	outputMsg('');
 
 	return installPath;
-	
-	// todo: gurantee to restart language server each time after installation
 	// todo: add KPM_BIN_PARTH to $PATH
 }
 
@@ -208,7 +206,7 @@ export function getBinaryName(toolName: string, version: string): string|undefin
 
 function reportNotSupportError(platform: string, arch: string){
 	// todo: add feedback button and link; add build from source link
-	outputMsg(`No prebuilt binary available for '${platform}'-'${arch}', feedback to us please.`);
+	outputMsg(`No prebuilt binary available for '${platform}'-'${arch}', please feedback to us.`);
 }
 
 

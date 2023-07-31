@@ -161,6 +161,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	let language_server_path: string | undefined;
 	if (!install.kcl_rust_lsp_installed()) {
 		language_server_path = await install.promptInstallLanguageServer();
+		if (client) {
+			client.restart();
+		}
 	} else {
 		language_server_path = install.KCL_LANGUAGE_SERVER;
 	}
