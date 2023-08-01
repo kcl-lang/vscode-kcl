@@ -158,14 +158,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(provider1);
-	let language_server_path: string | undefined;
-	if (!install.kcl_rust_lsp_installed()) {
-		language_server_path = await install.promptInstallLanguageServer();
-		if (client) {
-			client.restart();
-		}
-	} else {
-		language_server_path = install.KCL_LANGUAGE_SERVER;
+	let language_server_path: string | undefined = install.kcl_rust_lsp_location();
+	if (!language_server_path) {
+		language_server_path = await install.promptInstallLanguageServer(client);
 	}
 
 	if (language_server_path) {

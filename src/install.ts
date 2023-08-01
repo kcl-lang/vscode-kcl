@@ -5,6 +5,7 @@ import * as path from 'path';
 import axios, { AxiosResponse } from 'axios';
 import * as fs from 'fs';
 import * as shelljs from 'shelljs';
+import { LanguageClient } from 'vscode-languageclient/node';
 
 const KCL_PATH = path.join(os.homedir(), '.kcl');
 const KPM_PATH = path.join(KCL_PATH, 'kpm');
@@ -25,13 +26,14 @@ export function outputMsg(msg: string, append = true) {
 	}
 }
 
-export function kcl_rust_lsp_installed(): boolean {
+export function kcl_rust_lsp_location(): string | undefined {
 	// note: start from kcl 0.4.6 the kcl-language-server binary is renamed to kcl-language-server
 	// the old kcl-lsp binary will be deprecated
-	return shelljs.which("kcl-language-server") ? true : false;
+	// default to use the the kcl-language-server under ~/.kcl/kpm/bin, then the binary under the PATH
+	return fs.existsSync(getInstallPath(KCL_LANGUAGE_SERVER)) ? getInstallPath(KCL_LANGUAGE_SERVER): (shelljs.which("kcl-language-server") || undefined);
 }
 
-export async function promptInstallLanguageServer(): Promise<string | undefined> {
+export async function promptInstallLanguageServer(client: LanguageClient | undefined): Promise<string | undefined> {
 	const installOptions = ['Install', 'Cancel'];
 	const selected = await vscode.window.showErrorMessage(
 		`The kcl-language-server is required for KCL code intelliSense. Install now?`,
@@ -39,14 +41,14 @@ export async function promptInstallLanguageServer(): Promise<string | undefined>
 	);
 	switch(selected) {
 		case 'Install':
-			return installLanguageServer();
+			return installLanguageServer(client);
 		default:
 			return;
 	}
 }
 
 
-export async function installLanguageServer(): Promise<string | undefined> {
+export async function installLanguageServer(client: LanguageClient | undefined): Promise<string | undefined> {
 	outputChannel.show();
 	outputChannel.clear();
 
@@ -78,8 +80,10 @@ export async function installLanguageServer(): Promise<string | undefined> {
 	// separate line
 	outputMsg('');
 
+	if (client) {
+		client.restart();
+	}
 	return installPath;
-	// todo: add KPM_BIN_PARTH to $PATH
 }
 
 export async function downloadToLocal(releaseURL: string, installPath: string): Promise<boolean> {
