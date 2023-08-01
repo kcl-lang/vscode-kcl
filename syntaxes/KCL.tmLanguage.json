@@ -28,7 +28,7 @@
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.KCL",
-				"match": "\\b(as|assert|if|elif|else|lambda|for|import|schema|protocol|rule|mixin|relaxed|check|and|in|is|not|or|all|any|map|filter|type)\\b"
+				"match": "\\b(as|assert|if|elif|else|lambda|for|import|schema|protocol|rule|mixin|check|and|in|is|not|or|all|any|map|filter)\\b"
 			}]
 		},
 		"types": {
@@ -40,7 +40,7 @@
 		"builtin-literals": {
 			"patterns": [{
 				"name": "constant.language.KCL",
-				"match": "\\b(True|False|None)\\b"
+				"match": "\\b(True|False|None|Undefined)\\b"
 			}]
 		},
 		"single-quoted-strings": {
