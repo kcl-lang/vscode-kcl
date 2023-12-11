@@ -24,7 +24,7 @@
     },
     "dependencies": {
         "@types/shelljs": "^0.8.11",
-        "axios": "^1.4.0",
+        "axios": "^1.6.2",
         "shelljs": "^0.8.5",
         "vscode-languageclient": "^8.0.1"
     },
@@ -67,13 +67,6 @@
                 "language": "KCL",
                 "scopeName": "source.kcl",
                 "path": "./syntaxes/KCL.tmLanguage.json"
-            }
-        ],
-        "commands": [
-            {
-                "command": "kcl.installLanguageServer",
-                "title": "Install KCL Language Server",
-                "category": "KCL"
             }
         ]
     },

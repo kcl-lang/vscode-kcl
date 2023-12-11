@@ -21,19 +21,19 @@ export async function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	const installLanguageServer = vscode.commands.registerCommand('kcl.installLanguageServer', async () => {
-		const language_server_path = await install.installLanguageServer(client);
-		if (language_server_path) {
-			startLanguageServerWith(language_server_path);
-		}
-	});
+	// const installLanguageServer = vscode.commands.registerCommand('kcl.installLanguageServer', async () => {
+	// 	const language_server_path = await install.installLanguageServer(client);
+	// 	if (language_server_path) {
+	// 		startLanguageServerWith(language_server_path);
+	// 	}
+	// });
 
-	context.subscriptions.push(autoCompletionProvider, installLanguageServer);
+	context.subscriptions.push(autoCompletionProvider);
 
-	let language_server_path: string | undefined = install.kcl_rust_lsp_location();
-	if (!language_server_path) {
-		language_server_path = await install.promptInstallLanguageServer(client);
-	}
+	const language_server_path: string | undefined = install.kcl_rust_lsp_location();
+	// if (!language_server_path) {
+	// 	language_server_path = await install.promptInstallLanguageServer(client);
+	// }
 
 	if (language_server_path) {
 		startLanguageServerWith(language_server_path);

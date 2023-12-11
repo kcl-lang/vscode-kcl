@@ -49,6 +49,7 @@ export async function promptInstallLanguageServer(client: LanguageClient | undef
 }
 
 
+// todo: refactor with srcipt 'wget -q https://kcl-lang.io/script/install-kcl-lsp.sh -O - | /bin/bash'
 export async function installLanguageServer(client: LanguageClient | undefined): Promise<string | undefined> {
 	outputChannel.show();
 	outputChannel.clear();
