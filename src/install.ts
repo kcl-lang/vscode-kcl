@@ -31,7 +31,7 @@ export function kcl_rust_lsp_location(): string | undefined {
 	// note: start from kcl 0.4.6 the kcl-language-server binary is renamed to kcl-language-server
 	// the old kcl-lsp binary will be deprecated
 	// default to use the the kcl-language-server under ~/.kcl/kpm/bin, then the binary under the PATH
-	return fs.existsSync(getInstallPath(KCL_LANGUAGE_SERVER)) ? getInstallPath(KCL_LANGUAGE_SERVER) : (shelljs.which("kcl-language-server") || undefined);
+	return fs.existsSync(getInstallPath(KCL_LANGUAGE_SERVER)) ? getInstallPath(KCL_LANGUAGE_SERVER) : shelljs.which("kcl-language-server")?.toString();
 }
 
 export async function promptInstallLanguageServer(client: LanguageClient | undefined): Promise<string | undefined> {
@@ -49,6 +49,7 @@ export async function promptInstallLanguageServer(client: LanguageClient | undef
 }
 
 
+// todo: refactor with srcipt 'wget -q https://kcl-lang.io/script/install-kcl-lsp.sh -O - | /bin/bash'
 export async function installLanguageServer(client: LanguageClient | undefined): Promise<string | undefined> {
 	outputChannel.show();
 	outputChannel.clear();
