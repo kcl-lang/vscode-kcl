@@ -127,6 +127,7 @@ function autoCompletionItems(): vscode.CompletionItem[] {
 		{label: 'False', text: 'False'},
 		{label: 'None', text: 'None'},
 		{label: 'Undefined', text: 'Undefined'},
+		{label: 'type', text: 'type'},
 	];
 
 	const BuiltinFunctionsCompletions: {label: string, text: string, doc: string}[] = [
