@@ -163,7 +163,7 @@ function autoCompletionItems(): vscode.CompletionItem[] {
 	return [
 		...snippetCompletions.map(({label, text}) => createSnippetCompletion(label, vscode.CompletionItemKind.Snippet, text, "")),
 		...KeywordCompletions.map(({label, text}) => createSnippetCompletion(label, vscode.CompletionItemKind.Keyword, text, "")),
-		...BuiltinFunctionsCompletions.map(({label, text, doc}) => createSnippetCompletion(label, vscode.CompletionItemKind.Function, text, doc)),
+		// ...BuiltinFunctionsCompletions.map(({label, text, doc}) => createSnippetCompletion(label, vscode.CompletionItemKind.Function, text, doc)),
 	];
 }
 
