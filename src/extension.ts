@@ -75,7 +75,10 @@ function startLanguageServerWith(language_server_path: string) {
 		// Register the server for plain text documents
 		documentSelector: [{ scheme: "file", language: "KCL" }],
 		synchronize: {
-			fileEvents: vscode.workspace.createFileSystemWatcher("**/.k"),
+			fileEvents:[vscode.workspace.createFileSystemWatcher("**/*.k"),
+			vscode.workspace.createFileSystemWatcher("**/kcl.yaml"),
+			vscode.workspace.createFileSystemWatcher("**/kcl.mod"),
+		]
 		},
 		traceOutputChannel,
 	};
