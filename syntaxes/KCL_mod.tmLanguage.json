@@ -1,0 +1,106 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "KCL_mod",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#types"
+		},
+		{
+			"include": "#builtin-literals"
+		},
+		{
+			"include": "#single-quoted-strings"
+		},
+		{
+			"include": "#double-quoted-strings"
+		},
+		{
+			"include": "#comment"
+		},
+		{
+			"include": "#number"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.KCL_mod",
+				"match": "\\b(as|assert|if|elif|else|lambda|for|import|schema|protocol|rule|mixin|check|and|in|is|not|or|all|any|map|filter|type)\\b"
+			}]
+		},
+		"types": {
+			"patterns": [{
+				"name": "entity.name.type.KCL_mod",
+				"match": "\\b(str|int|float|bool)\\b"
+			}]
+		},
+		"builtin-literals": {
+			"patterns": [{
+				"name": "constant.language.KCL_mod",
+				"match": "\\b(True|False|None|Undefined)\\b"
+			}]
+		},
+		"single-quoted-strings": {
+			"name": "string.quoted.single.KCL_mod",
+			"begin": "'",
+			"end": "'",
+			"patterns": [
+				{
+					"name": "constant.character.escape.KCL_mod",
+					"match": "\\\\."
+				}
+			]
+		},
+		"double-quoted-strings": {
+			"name": "string.quoted.double.KCL_mod",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.KCL_mod",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comment": {
+			"name": "comment.line.number-sign.KCL_mod",
+			"patterns":[
+				{
+					"name": "comment.line.number-sign.KCL_mod",
+					"match": "#.*"
+				}
+			]
+		},
+		"number": {
+			"name": "constant.numeric.KCL_mod",
+			"patterns": [
+				{
+					"name": "constant.numeric.list.number.KCL_mod",
+					"match": "\\-?[1-9]\\d*"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL_mod",
+					"match": "\\-?0[xX][0-9a-fA-F]+"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL_mod",
+					"match": "\\-?0[oO][0-7]+"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL_mod",
+					"match": "\\-?0[bB][0-1]+"
+				},
+				{
+					"name": "constant.numeric.list.number.KCL_mod",
+					"match": "([-+]?\\d+\\.\\d*|\\.\\d+)([eE][-+]?\\d+)?|\\d+([eE][-+]?\\d+)"
+				}
+			]
+		}
+	},
+	"foldingStartMarker": "\\{\\s\\*\\$",
+	"foldingStopMarker": "\\^\\s\\*\\}",
+	"scopeName": "source.kcl_mod"
+}
