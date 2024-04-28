@@ -72,7 +72,7 @@
             {
                 "id": "MOD",
                 "extensions": [
-                    ".mod"
+                    ".mod",".mod.lock"
                 ]
             }
         ],
