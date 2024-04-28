@@ -84,8 +84,8 @@
             },
             {
                 "language": "MOD",
-                "scopeName": "source.kcl_mod",
-                "path": "./syntaxes/KCL_mod.tmLanguage.json"
+                "scopeName": "source.toml",
+                "path": "./syntaxes/toml.tmLanguage.json"
             }
         ]
     },
