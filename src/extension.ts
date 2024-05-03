@@ -15,6 +15,7 @@ import {
 let client: LanguageClient;
 
 export async function activate(context: vscode.ExtensionContext) {
+	console.log('KCL extension activated');
 	const autoCompletionProvider = vscode.languages.registerCompletionItemProvider('KCL', {
 		provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 			return autoCompletionItems();
@@ -28,7 +29,11 @@ export async function activate(context: vscode.ExtensionContext) {
 	// 	}
 	// });
 
+	const restartLanguageServerCommand = vscode.commands.registerCommand('kcl.restartLanguageServer', restartLanguageServer, "KCL: Restart Language Server");
+	console.log('KCL: Restart Language Server command registered');
+
 	context.subscriptions.push(autoCompletionProvider);
+    context.subscriptions.push(restartLanguageServerCommand);
 
 	const language_server_path: string | undefined = install.kcl_rust_lsp_location();
 	// if (!language_server_path) {
@@ -86,6 +91,17 @@ function startLanguageServerWith(language_server_path: string) {
 	client = new LanguageClient(install.KCL_LANGUAGE_SERVER, "kcl language server", serverOptions, clientOptions);
 	client.start();
 	install.outputMsg(`${install.KCL_LANGUAGE_SERVER} started!`);
+}
+
+function restartLanguageServer() {
+    if (client) {
+        client.stop().then(() => {
+            const language_server_path = install.kcl_rust_lsp_location();
+            if (language_server_path) {
+                startLanguageServerWith(language_server_path);
+            }
+        });
+    }
 }
 
 function autoCompletionItems(): vscode.CompletionItem[] {
