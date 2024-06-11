@@ -6,12 +6,14 @@ import axios, { AxiosResponse } from 'axios';
 import * as fs from 'fs';
 import * as shelljs from 'shelljs';
 import { LanguageClient } from 'vscode-languageclient/node';
+import { exec } from 'child_process';
 
 const KCL_PATH = path.join(os.homedir(), '.kcl');
 const KPM_PATH = path.join(KCL_PATH, 'kpm');
 const KPM_BIN_PATH = path.join(KPM_PATH, 'bin');
 const GIT_ORG = 'kcl-lang';
 const KCL_REPO = 'kcl';
+const LSP_INSTALL_URL = 'https://www.kcl-lang.io/docs/user_docs/getting-started/install#install-language-server';
 export const RELEASE_BASE_URL = `https://github.com/${GIT_ORG}/${KCL_REPO}/releases/download`;
 const RELEASE_API = `https://api.github.com/repos/${GIT_ORG}/${KCL_REPO}/releases/latest`;
 export const KCL_LANGUAGE_SERVER = 'kcl-language-server';
@@ -34,22 +36,55 @@ export function kcl_rust_lsp_location(): string | undefined {
 	return fs.existsSync(getInstallPath(KCL_LANGUAGE_SERVER)) ? getInstallPath(KCL_LANGUAGE_SERVER) : shelljs.which("kcl-language-server")?.toString();
 }
 
+export function kcl_lsp_location(): string | undefined {
+	return shelljs.which("kcl-language-server")?.toString();
+}
+
 export async function promptInstallLanguageServer(client: LanguageClient | undefined): Promise<string | undefined> {
 	const installOptions = ['Install', 'Cancel'];
 	const selected = await vscode.window.showErrorMessage(
-		`The kcl-language-server is required for KCL code intelliSense. Install now?`,
+		`The kcl-language-server is required for KCL extension. Install manually from: ${LSP_INSTALL_URL}?`,
 		...installOptions
 	);
 	switch (selected) {
 		case 'Install':
-			return installLanguageServer(client);
+			vscode.env.openExternal(vscode.Uri.parse(LSP_INSTALL_URL));
+			return;
 		default:
 			return;
 	}
 }
 
+// todo: Fix the issue where sudo permissions require a password
+export async function installLanguageServerWithScript(client: LanguageClient | undefined) {
+	outputChannel.show();
+	outputChannel.clear();
+	const platform = os.type() === 'Windows_NT' ? 'windows' : os.type().toLowerCase();
+	switch (platform) {
+		case 'darwin':
+			return downloadAndRunScript(`curl -fsSL https://kcl-lang.io/script/install-kcl-lsp.sh | /bin/bash`);
+		case 'linux':
+			return downloadAndRunScript(`wget -q https://kcl-lang.io/script/install-kcl-lsp.sh -O - | /bin/bash`);
+		case 'windows':
+			return downloadAndRunScript(`powershell -Command "iwr -useb https://kcl-lang.io/script/install-kcl-lsp.ps1 | iex"`);
+		default:
+			return;
+	}
+}
 
-// todo: refactor with srcipt 'wget -q https://kcl-lang.io/script/install-kcl-lsp.sh -O - | /bin/bash'
+function downloadAndRunScript(scriptCommand: string) {
+	return new Promise<string>((resolve, reject) => {
+		exec(scriptCommand, (error, stdout, stderr) => {
+			if (error) {
+				outputMsg(`Failed to install language server: ${error.message}`);
+			} else {
+				outputMsg(`Language server installation completed successfully`);
+			}
+		});
+	});
+}
+
+// todo: deprecated and replaced by installLanguageServerWithScript
 export async function installLanguageServer(client: LanguageClient | undefined): Promise<string | undefined> {
 	outputChannel.show();
 	outputChannel.clear();
@@ -136,6 +171,8 @@ export async function downloadToLocal(releaseURL: string, installPath: string): 
 					fs.unlinkSync(installPath);
 					resolve(false);
 				});
+			}).catch ((error) => {
+				outputMsg(`Failed to download binary: ${error.message}`);
 			});
 		} catch (error) {
 			downloadEnd = true;

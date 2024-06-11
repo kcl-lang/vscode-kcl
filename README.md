@@ -17,7 +17,6 @@ This extension provides some coding assistance, including the following features
 
 - **Syntax Highlight:**
   ![Highlight](https://kcl-lang.io/assets/images/Highlight-eb0516cd26555785169222292bede364.png)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkcl-lang%2Fvscode-kcl.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkcl-lang%2Fvscode-kcl?ref=badge_shield)
 - **Goto Definition:** Goto definition of schema, variable, schema attribute, and import pkg.
   ![Goto Definition](https://kcl-lang.io/assets/images/GotoDef-0875243eacd6b76e49b7a5b95cb9ce55.gif)
 - **Completion:** Keywords completions and dot(`.`) completion.
@@ -51,6 +50,3 @@ We are working actively on improving the KCL development on VS Code. All kinds o
 ## License
 
 Apache License Version 2.0
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fkcl-lang%2Fvscode-kcl.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fkcl-lang%2Fvscode-kcl?ref=badge_large)
