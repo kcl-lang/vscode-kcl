@@ -35,10 +35,10 @@ export async function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(autoCompletionProvider);
     context.subscriptions.push(restartLanguageServerCommand);
 
-	const language_server_path: string | undefined = install.kcl_rust_lsp_location();
-	// if (!language_server_path) {
-	// 	language_server_path = await install.promptInstallLanguageServer(client);
-	// }
+	let language_server_path: string | undefined = install.kcl_lsp_location();
+	if (!language_server_path) {
+		language_server_path = await install.promptInstallLanguageServer(client);
+	}
 
 	if (language_server_path) {
 		startLanguageServerWith(language_server_path);
