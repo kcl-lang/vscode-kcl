@@ -12,6 +12,12 @@
 			"include": "#builtin-literals"
 		},
 		{
+			"include": "#triple-double-quoted-strings"
+		},
+		{
+			"include": "#triple-single-quoted-strings"
+		},
+		{
 			"include": "#single-quoted-strings"
 		},
 		{
@@ -43,27 +49,25 @@
 				"match": "\\b(True|False|None|Undefined)\\b"
 			}]
 		},
+		"triple-double-quoted-strings": {
+			"name": "string.quoted.double.triple.KCL",
+			"begin": "\"\"\"",
+			"end": "\"\"\""
+		},
+		"triple-single-quoted-strings": {
+			"name": "string.quoted.single.triple.KCL",
+			"begin": "'''",
+			"end": "'''"
+		},
 		"single-quoted-strings": {
 			"name": "string.quoted.single.KCL",
 			"begin": "'",
-			"end": "'",
-			"patterns": [
-				{
-					"name": "constant.character.escape.KCL",
-					"match": "\\\\."
-				}
-			]
+			"end": "'"
 		},
 		"double-quoted-strings": {
 			"name": "string.quoted.double.KCL",
 			"begin": "\"",
-			"end": "\"",
-			"patterns": [
-				{
-					"name": "constant.character.escape.KCL",
-					"match": "\\\\."
-				}
-			]
+			"end": "\""
 		},
 		"comment": {
 			"name": "comment.line.number-sign.KCL",
