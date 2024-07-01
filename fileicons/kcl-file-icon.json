@@ -1,10 +1,7 @@
 {
     "iconDefinitions": { 
         "_file_light": {
-            "iconPath": "./images/document-light.svg"
-        },
-        "_file_dark": {
-            "iconPath": "./images/document-light.svg"
+            "iconPath": "./images/kcl-logo.svg"
         }
     },
     "languageIds": {
@@ -20,7 +17,7 @@
     },
     "highContrast": {
         "fileExtensions": {
-            "k": "_file_dark"
+            "k": "_file_light"
         }
     }
   }
