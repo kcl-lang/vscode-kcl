@@ -3,7 +3,7 @@
     "publisher": "kcl",
     "displayName": "KCL",
     "description": "Language extension for KCL",
-    "version": "0.1.9",
+    "version": "0.1.10",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -96,7 +96,7 @@
             }
         ]
     },
-    "icon": "icon.png",
+    "icon": "kcl-logo.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/kcl-lang/vscode-kcl"

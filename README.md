@@ -16,7 +16,7 @@
 This extension provides some coding assistance, including the following features:
 
 - **Syntax Highlight:**
-  ![Highlight](https://kcl-lang.io/assets/images/Highlight-eb0516cd26555785169222292bede364.png)
+  ![Highlight](https://www.kcl-lang.io/assets/images/Highlight-ddacdde9f18d504f7a103583c2f76b86.png)
 - **Goto Definition:** Goto definition of schema, variable, schema attribute, and import pkg.
   ![Goto Definition](https://kcl-lang.io/assets/images/GotoDef-0875243eacd6b76e49b7a5b95cb9ce55.gif)
 - **Completion:** Keywords completions and dot(`.`) completion.
