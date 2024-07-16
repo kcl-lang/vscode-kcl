@@ -3,7 +3,7 @@
     "publisher": "kcl",
     "displayName": "KCL",
     "description": "Language extension for KCL",
-    "version": "0.1.10",
+    "version": "0.1.11",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -13,7 +13,6 @@
     ],
     "activationEvents": [
         "onLanguage:KCL",
-        "onLanguage:YAML",
         "onLanguage:MOD",
         "onCommand:kcl.restartLanguageServer"
     ],
@@ -69,12 +68,6 @@
                     ".k"
                 ],
                 "configuration": "./language-configuration.json"
-            },
-            {
-                "id": "YAML",
-                "extensions": [
-                    ".yaml"
-                ]
             },
             {
                 "id": "MOD",
