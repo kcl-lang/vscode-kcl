@@ -1,0 +1,23 @@
+# https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions-automated-publishing
+name: Publish to VSCode
+on:
+    release:
+        types:
+            - created
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 18.x
+            - name: Publish
+              # Publish only if the tests pass &&  only if a tagged (release) build.
+              if: success() && startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
+              run: npm install && npm run deploy
+              env:
+                  VSCE_PAT: ${{ secrets.VSCE_PAT }}
