@@ -17,7 +17,7 @@ jobs:
                   node-version: 18.x
             - name: Publish
               # Publish only if the tests pass &&  only if a tagged (release) build.
-              if: success() && startsWith(github.ref, 'refs/tags/') && matrix.os == 'ubuntu-latest'
+              if: success() && startsWith(github.ref, 'refs/tags/')
               run: npm install && npm run deploy
               env:
                   VSCE_PAT: ${{ secrets.VSCE_PAT }}
