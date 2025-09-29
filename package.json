@@ -3,7 +3,7 @@
     "publisher": "kcl",
     "displayName": "KCL",
     "description": "Language extension for KCL",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "engines": {
         "vscode": "^1.63.0"
     },
@@ -69,6 +69,10 @@
                 "extensions": [
                     ".k"
                 ],
+                "icon": {
+                    "light": "./fileicons/images/kcl-logo.svg",
+                    "dark": "./fileicons/images/kcl-logo.svg"
+                },
                 "configuration": "./language-configuration.json"
             },
             {
