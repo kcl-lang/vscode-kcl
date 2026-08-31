@@ -27,7 +27,7 @@
     },
     "dependencies": {
         "@types/shelljs": "^0.8.11",
-        "axios": "^1.6.2",
+        "axios": "1.8.2",
         "shelljs": "^0.8.5",
         "vscode-languageclient": "^9.0.1"
     },
