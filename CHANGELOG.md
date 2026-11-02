@@ -6,4 +6,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+- Add KCL data preview: run the current file or stack and show the YAML result in an editor panel.
 - Initial release

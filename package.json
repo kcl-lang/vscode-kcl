@@ -14,7 +14,11 @@
     "activationEvents": [
         "onLanguage:KCL",
         "onLanguage:MOD",
-        "onCommand:kcl.restartLanguageServer"
+        "onCommand:kcl.restartLanguageServer",
+        "onCommand:kcl.openPreview",
+        "onCommand:kcl.openPreviewToSide",
+        "onCommand:kcl.previewUnavailable",
+        "onCommand:kcl.previewToSideUnavailable"
     ],
     "main": "./out/extension.js",
     "scripts": {
@@ -48,8 +52,84 @@
             {
                 "command": "kcl.restartLanguageServer",
                 "title": "KCL: Restart Language Server"
+            },
+            {
+                "command": "kcl.openPreview",
+                "title": "KCL: Data Preview"
+            },
+            {
+                "command": "kcl.openPreviewToSide",
+                "title": "KCL: Open Preview to the Side",
+                "icon": "$(open-preview)"
+            },
+            {
+                "command": "kcl.previewUnavailable",
+                "title": "KCL: Data Preview — fix errors first"
+            },
+            {
+                "command": "kcl.previewToSideUnavailable",
+                "title": "KCL: Open Preview to the Side — fix errors first",
+                "icon": "$(warning)"
             }
         ],
+        "keybindings": [
+            {
+                "command": "kcl.openPreview",
+                "key": "shift+ctrl+v",
+                "mac": "shift+cmd+v",
+                "when": "editorLangId == KCL"
+            },
+            {
+                "command": "kcl.openPreviewToSide",
+                "key": "ctrl+k v",
+                "mac": "cmd+k v",
+                "when": "editorLangId == KCL"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "kcl.openPreviewToSide",
+                    "when": "editorLangId == KCL && !kcl.previewHasErrors",
+                    "group": "navigation"
+                },
+                {
+                    "command": "kcl.previewToSideUnavailable",
+                    "when": "editorLangId == KCL && kcl.previewHasErrors",
+                    "group": "navigation"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "kcl.openPreview",
+                    "when": "resourceLangId == KCL && !kcl.previewHasErrors",
+                    "group": "navigation"
+                },
+                {
+                    "command": "kcl.previewUnavailable",
+                    "when": "resourceLangId == KCL && kcl.previewHasErrors",
+                    "group": "navigation"
+                }
+            ],
+            "commandPalette": [
+                {
+                    "command": "kcl.openPreview",
+                    "when": "editorLangId == KCL && !kcl.previewHasErrors"
+                },
+                {
+                    "command": "kcl.openPreviewToSide",
+                    "when": "editorLangId == KCL && !kcl.previewHasErrors"
+                },
+                {
+                    "command": "kcl.previewUnavailable",
+                    "when": "editorLangId == KCL && kcl.previewHasErrors"
+                },
+                {
+                    "command": "kcl.previewToSideUnavailable",
+                    "when": "editorLangId == KCL && kcl.previewHasErrors"
+                }
+            ]
+        },
         "type": "object",
         "title": "KCL configuration",
         "properties": {

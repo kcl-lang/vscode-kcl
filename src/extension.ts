@@ -4,6 +4,7 @@
 
 import * as vscode from 'vscode';
 import * as install from './install';
+import { registerKclPreview } from './preview/previewController';
 
 import {
 	Executable,
@@ -16,6 +17,9 @@ let client: LanguageClient;
 
 export async function activate(context: vscode.ExtensionContext) {
 	console.log('KCL extension activated');
+	// Register preview before the language-server prompt so the command is usable
+	// even when the language server is not installed yet.
+	registerKclPreview(context);
 	const autoCompletionProvider = vscode.languages.registerCompletionItemProvider('KCL', {
 		provideCompletionItems(document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken, context: vscode.CompletionContext) {
 			return autoCompletionItems();
