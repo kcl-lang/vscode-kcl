@@ -27,6 +27,12 @@ This extension provides some coding assistance, including the following features
   ![Hover](https://kcl-lang.io/assets/images/Hover-339697d17ca0d4f167b1b1a904c9f1aa.gif)
 - **Diagnostics:** Warnings and errors in KCL file.
   ![Diagnostics](https://kcl-lang.io/assets/images/Diagnostics-716fc3b938a94e4db2cbafaad4f4174d.gif)
+- **Data Preview:** Run the current KCL file, or the stack around it (`kcl.yaml` or `kcl.mod`), and show the YAML in an editor panel.
+  - `KCL: Data Preview` (`Shift+Ctrl+V`, `Shift+Cmd+V` on macOS)
+  - `KCL: Open Preview to the Side` (`Ctrl+K V`, `Cmd+K V` on macOS), also on the editor toolbar
+  - Right-click the editor tab and choose **KCL: Data Preview**
+  - When the configuration has errors, those actions stay visible and explain that the code needs to be fixed. The shortcuts still open the panel with that warning.
+  - Preview uses the `kcl` CLI. A single file updates as you type; a stack preview uses the saved files.
 
 Other useful features such as refactoring and testing are in development.
 
