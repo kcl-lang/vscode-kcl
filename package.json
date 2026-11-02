@@ -50,14 +50,16 @@
                 "title": "KCL: Restart Language Server"
             }
         ],
-        "type": "object",
-        "title": "KCL configuration",
-        "properties": {
-            "languageServerExample.maxNumberOfProblems": {
-                "scope": "resource",
-                "type": "number",
-                "default": 100,
-                "description": "Controls the maximum number of problems produced by the server."
+        "configuration": {
+            "type": "object",
+            "title": "KCL",
+            "properties": {
+                "kcl.lineDecorators.enabled": {
+                    "scope": "language-overridable",
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show inline type hints (line decorators) from the KCL language server. Hover still shows type information when this is turned off."
+                }
             }
         },
         "languages": [

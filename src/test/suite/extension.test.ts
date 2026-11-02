@@ -17,6 +17,12 @@ suite('Extension Test Suite', function() {
 		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
 	});
 
+	test('line decorators are enabled by default', () => {
+		const inspected = vscode.workspace.getConfiguration().inspect<boolean>('kcl.lineDecorators.enabled');
+		assert.ok(inspected, 'kcl.lineDecorators.enabled should be contributed');
+		assert.strictEqual(inspected.defaultValue, true);
+	});
+
 	test('installation: getBinaryName test', () => {
 		const binaryName = install.getBinaryName(install.KCL_LANGUAGE_SERVER, 'v0.5.0');
 		if (os.type() === 'Windows_NT' && os.arch() === 'x64') {
