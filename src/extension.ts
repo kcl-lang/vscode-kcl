@@ -7,10 +7,14 @@ import * as install from './install';
 
 import {
 	Executable,
+	InlayHintRequest,
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
+	State,
 } from 'vscode-languageclient/node';
+
+const lineDecoratorsSetting = 'kcl.lineDecorators.enabled';
 
 let client: LanguageClient;
 
@@ -33,7 +37,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	console.log('KCL: Restart Language Server command registered');
 
 	context.subscriptions.push(autoCompletionProvider);
-    context.subscriptions.push(restartLanguageServerCommand);
+	context.subscriptions.push(restartLanguageServerCommand);
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
+		if (event.affectsConfiguration(lineDecoratorsSetting)) {
+			refreshLineDecorators();
+		}
+	}));
 
 	let language_server_path: string | undefined = install.kcl_lsp_location();
 	if (!language_server_path) {
@@ -86,11 +95,39 @@ function startLanguageServerWith(language_server_path: string) {
 		]
 		},
 		traceOutputChannel,
+		middleware: {
+			provideInlayHints: (document, viewPort, token, next) => {
+				if (!lineDecoratorsEnabled(document)) {
+					return [];
+				}
+				return next(document, viewPort, token);
+			},
+		},
 	};
 
 	client = new LanguageClient(install.KCL_LANGUAGE_SERVER, "kcl language server", serverOptions, clientOptions);
 	client.start();
 	install.outputMsg(`${install.KCL_LANGUAGE_SERVER} started!`);
+}
+
+function lineDecoratorsEnabled(document: vscode.TextDocument): boolean {
+	return vscode.workspace.getConfiguration(undefined, document).get<boolean>(lineDecoratorsSetting, true);
+}
+
+function refreshLineDecorators(): void {
+	if (!client || client.state !== State.Running) {
+		return;
+	}
+	const feature = client.getFeature(InlayHintRequest.method);
+	const refreshed = new Set<ReturnType<typeof feature.getProvider>>();
+	for (const editor of vscode.window.visibleTextEditors) {
+		const provider = feature.getProvider(editor.document);
+		if (!provider || refreshed.has(provider)) {
+			continue;
+		}
+		refreshed.add(provider);
+		provider.onDidChangeInlayHints.fire();
+	}
 }
 
 function restartLanguageServer() {
