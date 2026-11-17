@@ -15,7 +15,14 @@ async function main() {
 		// Download VS Code, unzip it and run the integration test.
 		// Current macOS builds no longer ship Contents/MacOS/Electron, which
 		// @vscode/test-electron 2.x launches. 1.109.2 still does.
-		await runTests({ extensionDevelopmentPath, extensionTestsPath, version: '1.109.2' });
+		// The download idle timeout defaults to 15s. A stall on the macOS
+		// runner aborts the transfer and crashes the process.
+		await runTests({
+			extensionDevelopmentPath,
+			extensionTestsPath,
+			version: '1.109.2',
+			timeout: 120000,
+		});
 	} catch (err) {
 		console.error('Failed to run tests');
 		process.exit(1);
