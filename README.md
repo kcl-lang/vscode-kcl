@@ -27,8 +27,9 @@ This extension provides some coding assistance, including the following features
   ![Hover](https://kcl-lang.io/assets/images/Hover-339697d17ca0d4f167b1b1a904c9f1aa.gif)
 - **Diagnostics:** Warnings and errors in KCL file.
   ![Diagnostics](https://kcl-lang.io/assets/images/Diagnostics-716fc3b938a94e4db2cbafaad4f4174d.gif)
+- **Run tests:** In a `*_test.k` file, right-click a `test_*` lambda and choose **KCL: Run Test**. The command runs that test with `kcl test`. The language server's run-test code lens uses the same command.
 
-Other useful features such as refactoring and testing are in development.
+Other useful features such as refactoring are in development.
 
 ## Dependencies
 

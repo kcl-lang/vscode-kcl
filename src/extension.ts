@@ -4,6 +4,7 @@
 
 import * as vscode from 'vscode';
 import * as install from './install';
+import { registerKclTestRunner } from './kclTest';
 
 import {
 	Executable,
@@ -34,6 +35,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(autoCompletionProvider);
     context.subscriptions.push(restartLanguageServerCommand);
+	registerKclTestRunner(context);
 
 	let language_server_path: string | undefined = install.kcl_lsp_location();
 	if (!language_server_path) {
