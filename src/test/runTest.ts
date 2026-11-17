@@ -12,8 +12,10 @@ async function main() {
 		// Passed to --extensionTestsPath
 		const extensionTestsPath = path.resolve(__dirname, './suite/index');
 
-		// Download VS Code, unzip it and run the integration test
-		await runTests({ extensionDevelopmentPath, extensionTestsPath, version: 'stable' });
+		// Download VS Code, unzip it and run the integration test.
+		// Current macOS builds no longer ship Contents/MacOS/Electron, which
+		// @vscode/test-electron 2.x launches. 1.109.2 still does.
+		await runTests({ extensionDevelopmentPath, extensionTestsPath, version: '1.109.2' });
 	} catch (err) {
 		console.error('Failed to run tests');
 		process.exit(1);

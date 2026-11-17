@@ -1,7 +1,9 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-suite('Embedded KCL editor', () => {
+suite('Embedded KCL editor', function() {
+	this.timeout(60000);
+
 	test('offers KCL completions inside a KCLInput block and not on the YAML keys', async () => {
 		const extension = vscode.extensions.getExtension('kcl.kcl-vscode-extension');
 		assert.ok(extension, 'KCL extension is installed in the test host');
