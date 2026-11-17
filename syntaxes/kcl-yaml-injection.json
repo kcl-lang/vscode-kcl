@@ -1,0 +1,16 @@
+{
+	"scopeName": "source.yaml.kcl-injection",
+	"injectionSelector": "L:source.yaml -comment -string",
+	"patterns": [
+		{
+			"begin": "(?:\\||>)(?:[1-9][-+]?|[-+][1-9]?)?[ \\t]+#[ \\t]*[kK][cC][lL]\\b.*$",
+			"end": "^(?=\\S)",
+			"contentName": "meta.embedded.block.kcl",
+			"patterns": [
+				{
+					"include": "source.kcl"
+				}
+			]
+		}
+	]
+}
