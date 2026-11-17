@@ -1,3 +1,6 @@
+// Copyright The KCL Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 import * as assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';

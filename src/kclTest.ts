@@ -1,3 +1,6 @@
+// Copyright The KCL Authors. All rights reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 /**
  * Run KCL unit tests from the editor.
  *
