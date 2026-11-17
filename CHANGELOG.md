@@ -6,4 +6,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+- Run a KCL unit test from the editor context menu, or from the language server code lens, with `kcl test`.
 - Initial release

@@ -14,7 +14,9 @@
     "activationEvents": [
         "onLanguage:KCL",
         "onLanguage:MOD",
-        "onCommand:kcl.restartLanguageServer"
+        "onCommand:kcl.restartLanguageServer",
+        "onCommand:kcl.runTest",
+        "onCommand:kcl.runTestsInFile"
     ],
     "main": "./out/extension.js",
     "scripts": {
@@ -48,8 +50,40 @@
             {
                 "command": "kcl.restartLanguageServer",
                 "title": "KCL: Restart Language Server"
+            },
+            {
+                "command": "kcl.runTest",
+                "title": "KCL: Run Test"
+            },
+            {
+                "command": "kcl.runTestsInFile",
+                "title": "KCL: Run Tests in File"
             }
         ],
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "kcl.runTest",
+                    "when": "editorLangId == KCL && resourceFilename =~ /^[^_].*_test\\.k$/"
+                },
+                {
+                    "command": "kcl.runTestsInFile",
+                    "when": "editorLangId == KCL && resourceFilename =~ /^[^_].*_test\\.k$/"
+                }
+            ],
+            "editor/context": [
+                {
+                    "command": "kcl.runTest",
+                    "when": "editorLangId == KCL && resourceFilename =~ /^[^_].*_test\\.k$/",
+                    "group": "navigation@20"
+                },
+                {
+                    "command": "kcl.runTestsInFile",
+                    "when": "editorLangId == KCL && resourceFilename =~ /^[^_].*_test\\.k$/",
+                    "group": "navigation@21"
+                }
+            ]
+        },
         "type": "object",
         "title": "KCL configuration",
         "properties": {
