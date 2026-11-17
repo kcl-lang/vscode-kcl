@@ -30,6 +30,31 @@ This extension provides some coding assistance, including the following features
 
 Other useful features such as refactoring and testing are in development.
 
+## Embedded KCL in YAML
+
+KCL is often embedded in a YAML block scalar, for example the `source` field of a Crossplane [`KCLInput`](https://github.com/crossplane-contrib/function-kcl). The extension highlights that KCL and, when `kcl-language-server` is installed, provides completion, hover, go to definition, and diagnostics for it.
+
+A `source` block under `kind: KCLInput` is recognized automatically:
+
+```yaml
+apiVersion: krm.kcl.dev/v1alpha1
+kind: KCLInput
+spec:
+  source: |
+    oxr = option("params").oxr
+    items = [oxr]
+```
+
+Any other YAML block scalar can opt in by putting a `# kcl` comment on its header line. This is the same marker used by YAML embedded-language extensions:
+
+```yaml
+script: | # kcl
+  schema Name:
+    name: str
+```
+
+Literal (`|`) and folded (`>`) blocks are recognized, including chomping (`-`, `+`) and an explicit indentation indicator. The language server checks the embedded program as its own KCL file, so an import that depends on a `kcl.mod` next to the YAML file may not resolve.
+
 ## Dependencies
 
 We recommend that you use the latest version of KCLVM, but the minimum required version for this extension is 0.4.6. If you are using an earlier version, the extension may not work properly.

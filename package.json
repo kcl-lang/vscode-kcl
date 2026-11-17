@@ -14,6 +14,7 @@
     "activationEvents": [
         "onLanguage:KCL",
         "onLanguage:MOD",
+        "onLanguage:yaml",
         "onCommand:kcl.restartLanguageServer"
     ],
     "main": "./out/extension.js",
@@ -93,6 +94,16 @@
                 "language": "MOD",
                 "scopeName": "source.toml",
                 "path": "./syntaxes/toml.tmLanguage.json"
+            },
+            {
+                "scopeName": "source.yaml.kcl-injection",
+                "path": "./syntaxes/kcl-yaml-injection.json",
+                "injectTo": [
+                    "source.yaml"
+                ],
+                "embeddedLanguages": {
+                    "meta.embedded.block.kcl": "KCL"
+                }
             }
         ]
     },
